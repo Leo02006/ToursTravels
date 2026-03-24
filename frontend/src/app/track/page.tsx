@@ -1,6 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 import { Navbar } from '@/components/Navbar'
+import { API_URL } from '@/config/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Search } from 'lucide-react'
 import { useCurrency } from '@/lib/CurrencyContext'
