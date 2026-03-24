@@ -1,0 +1,184 @@
+\chapter{TESTING}
+Testing is a crucial part of game development, ensuring that the game runs smoothly, is free of bugs, and provides a seamless experience for players. Without proper testing, a game may have glitches, crashes, or broken mechanics that frustrate players and lead to poor reception. It involves different types of testing, such as unit testing,integration testing, System testing and performance testing. .  
+\noindent
+Unit testing checks individual components like player movement, UI interactions, and API calls to ensure they work correctly.Integration testing ensures that different game components, such as player movement, checkpoints, coding challenges, and API interactions, work together smoothly without errors.System testing evaluates the entire game as a complete system to ensure that all components work together correctly.Performance testing ensures that the game runs smoothly and efficiently under different conditions.
+
+\section{Unit Testing}
+Unit testing focuses on testing individual components of the game, such as player movement, UI interactions, and game logic, to ensure they function correctly. For example, unit tests can verify if the player moves correctly when a key is pressed or if a checkpoint activates when reached. By implementing unit testing, developers can maintain a stable and bug-free game, improving overall performance and reliability.
+
+
+
+\renewcommand{\arraystretch}{1.3}
+
+\begin{longtable}{|p{1.5cm}|p{2.5cm}|p{4cm}|p{4cm}|c|}
+    
+    \hline
+    \textbf{Test Case ID} & \textbf{Component} & \textbf{Test Description} & \textbf{Expected Result} & \textbf{Status} \\
+    \hline
+    \endfirsthead
+
+    \hline
+    \textbf{Test Case ID} & \textbf{Component} & \textbf{Test Description} & \textbf{Expected Result} & \textbf{Status} \\
+    \hline
+    \endhead
+
+    \hline
+    
+    \endfoot
+
+    \hline
+    \caption{Unit Test Cases for Debug Defuse} \label{tab:unit_tests} \\
+    \endlastfoot
+
+    UT01 & Player Movement & \raggedright Verify that the player moves correctly using input keys & \raggedright Player moves in the correct direction & Pass \\
+    \hline
+    UT02 & Collision Detection & \raggedright Ensure the player correctly collides with platforms, walls, and other objects & \raggedright Player stops at obstacles and stands on platforms without falling through & Pass \\
+    \hline
+    UT03 & Checkpoint Activation & \raggedright Ensure checkpoints activate coding challenges when reached & \raggedright Coding challenge pops up & Pass \\
+    \hline
+    UT04 & Coding Input Validation & \raggedright Validate that the entered code is sent to JDoodle API & \raggedright Code is successfully sent & Pass \\
+    \hline
+    UT05 & Test Case Validation & \raggedright Ensure output from JDoodle is checked against predefined test cases & \raggedright Correct validation occurs & Pass \\
+    \hline
+    UT06 & Game Progression & \raggedright Check if solving a coding challenge allows the player to move forward & \raggedright Player can continue the maze & Pass \\
+    \hline
+    UT07 & Level Complete Condition & \raggedright Verify that completing the maze triggers the level complete screen & \raggedright Level complete screen appears & Pass \\
+    \hline
+    UT08 & Pause/Resume Functionality & \raggedright Ensure pausing and resuming works correctly & \raggedright Game pauses/resumes properly & Pass \\
+    \end{longtable}
+
+
+
+
+
+
+
+\newpage
+\section{Integration Testing}
+Integration testing ensures that different game components interact correctly with each other without errors. It checks whether player movement, checkpoints, coding challenges, and API interactions work seamlessly as a unified system. For example, integration tests verify whether reaching a checkpoint correctly triggers a coding challenge and whether the JDoodle API processes submitted code efficiently. By conducting integration testing, developers can identify and resolve issues that arise when multiple components work together, improving game stability and user experience.
+\FloatBarrier % Prevents table from moving to the next page
+\vspace{-10pt} % Reduces extra space before the table
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \small
+    \begin{tabular}{|c|p{3cm}|p{3cm}|p{3cm}|c|}
+        \hline
+        \textbf{Test Case ID} & \textbf{Component} & \textbf{Test Description} & \textbf{Expected Result} & \textbf{Status} \\
+        \hline
+        IT01 & Player and Checkpoints & Verify if reaching a checkpoint triggers the coding challenge & Coding challenge appears when the player reaches a checkpoint & Pass \\
+        \hline
+        IT02 & Coding Challenge and JDoodle API & Ensure that the submitted code is sent correctly and processed by the JDoodle API & Code is compiled and executed correctly & Pass \\
+        \hline
+        IT03 & Player Movement and Game Progression & Ensure that solving a coding challenge allows the player to progress & Player can move forward after solving the challenge & Pass \\
+        \hline
+        IT04 & UI and API Interaction & Check if error messages display correctly when JDoodle API fails & Proper error message is shown when API fails & Pass \\
+        \hline
+        IT05 & Pause Function and Game State & Verify if pausing the game properly freezes all interactions & Game pauses, and resumes correctly after unpausing & Pass \\
+        \hline
+        IT06 &  Questions and Level Completion  Screen & Ensure that completing all coding challenges triggers the level complete screen & Level complete screen appears at the right time & Pass \\
+        \hline
+    \end{tabular}
+    \caption{Integration Test Cases for Debug Defuse}
+    \label{tab:integration_tests}
+\end{table}
+\newpage
+\section{System Testing}
+System testing evaluates the entire game as a complete system to ensure that all components work together correctly. It verifies the game’s functionality, performance, and user experience across different devices and environments. Unlike unit or functional testing, system testing checks how the game behaves as a whole, including UI, gameplay mechanics, backend integration, and external API interactions.\\
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{|c|c|p{4cm}|p{3cm}|c|}
+        \hline
+        \textbf{Test Case ID} & \textbf{Component} & \textbf{Test Description} & \textbf{Expected Result} & \textbf{Status} \\
+        \hline
+        ST01 & Game Launch & Verify that the game launches without crashes & Game starts successfully & Pass \\
+        \hline
+        ST02 & User Interface & Check if all UI elements function properly & Buttons, menus, and text fields work correctly & Pass \\
+        \hline
+        ST03 & Game Flow & Ensure players can move, answer coding challenges, and progress & Players can navigate the maze smoothly & Pass \\
+        \hline
+        ST04 & API Integration & Verify that the JDoodle API compiles and returns results properly & Code submissions are validated correctly & Pass \\
+        \hline
+        ST05 & Performance Testing & Check for lag, crashes, or excessive memory usage & Game runs smoothly without lag & Pass \\
+        \hline
+    \end{tabular}
+    \caption{System Test Cases for Debug Defuse}
+    \label{tab:system_tests}
+\end{table}
+\newpage
+\section{Regression Testing}
+Regression testing is a type of software testing that ensures recent changes or updates in code do not negatively affect the existing functionality of the application. It helps confirm that the new features or bug fixes haven't unintentionally broken any part of the game or application that was previously working.
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \small
+    \begin{tabular}{|c|c|p{3cm}|p{3cm}|c|}
+        \hline
+        \textbf{Test Case ID} & \textbf{Component} & \textbf{Test Description} & \textbf{Expected Result} & \textbf{Status} \\
+        \hline
+        RT01 & Player Movement & \raggedright Verify that movement updates don’t affect navigation & \raggedright Player moves smoothly without glitches & Pass \\
+        \hline
+        RT02 & Checkpoint System & \raggedright Ensure coding panel activates only at the right checkpoints & \raggedright Challenge is triggered on correct checkpoint & Pass \\
+        \hline
+        RT03 & Game Progression & \raggedright Check if unsolved challenges prevent checkpoint movement & \raggedright Player is blocked until solution is correct & Pass \\
+        \hline
+        RT04 & UI Menu Handling & \raggedright Test if the pause/resume works after UI updates & \raggedright Game resumes from the same point & Pass \\
+        \hline
+        RT05 & Sound System & \raggedright Validate new background music and SFX trigger properly & \raggedright Music and sounds play at right moments & Pass \\
+        \hline
+        RT06 & Feedback Display & \raggedright Check if compiler feedback and hints are shown correctly & \raggedright Real-time feedback visible to player & Pass \\
+        \hline
+    \end{tabular}
+    \caption{Regression Test Cases for Debug Defuse}
+    \label{tab:regression_tests}
+\end{table}
+\newpage
+\section{Sound and Media Testing}
+Sound and media testing in the game ensures that all audio elements—such as background music, sound effects, and volume controls—function seamlessly during gameplay. This includes verifying that the main menu and in-game music play correctly, character sound effects like footsteps and interactions trigger accurately, and that pausing or resuming the game appropriately controls audio playback. It also checks for proper handling of multiple audio sources to prevent distortion or overlap. These tests guarantee a smooth and immersive audio experience that enhances the overall gameplay.
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \small
+    \begin{tabular}{|c|c|p{3cm}|p{3cm}|c|}
+        \hline
+        \textbf{Test Case ID} & \textbf{Component} & \textbf{Test Description} & \textbf{Expected Result} & \textbf{Status} \\
+        \hline
+        SM01 & Background Music & \raggedright Verify that main menu background music plays correctly & \raggedright Background score starts automatically on main menu & Pass \\
+        \hline
+        SM02 & In-Game Music & \raggedright Check if background score plays continuously during gameplay & \raggedright Music plays smoothly without interruption during game & Pass \\
+        \hline
+        SM03 & Character Sound Effects & \raggedright Validate footstep/jump/interaction sounds play on player action & \raggedright Appropriate sound triggers on player movement or interaction & Pass \\
+        \hline
+        SM04 & Audio Overlap & \raggedright Ensure that multiple sound effects do not overlap or distort & \raggedright Audio channels handle multiple sounds cleanly & Pass \\
+        \hline
+    \end{tabular}
+    \caption{Sound and Media Testing for Debug Defuse}
+    \label{tab:sound_media_tests}
+\end{table}
+
+\newpage
+\section{Performance Testing}
+Performance testing ensures that the game runs smoothly and efficiently under different conditions. It checks for frame rates, load times, memory usage, CPU/GPU performance, and responsiveness to ensure an optimal user experience. A well-performing game should not have lags, crashes, or long loading times that disrupt gameplay.\\
+\begin{table}[H]
+    \centering
+    \renewcommand{\arraystretch}{1.3}
+    \begin{tabular}{|c|c|p{4cm}|p{3cm}|c|}
+        \hline
+        \textbf{Test Case ID} & \textbf{Component} & \textbf{Test Description} & \textbf{Expected Result} & \textbf{Status} \\
+        \hline
+        PT01 & Memory Usage & Check RAM consumption during gameplay & Memory usage stays within an optimal range & Pass \\
+        \hline
+        PT02 & Loading Time & Measure time taken to load levels and UI elements & Loading time is under 3-5 seconds & Pass \\
+        \hline
+        PT03 & CPU & Monitor CPU usage while running the game & CPU load remains within an acceptable range & Pass \\
+        \hline
+        PT04 & GPU & Check if the graphics processing is optimized & No overheating or excessive GPU load & Pass \\
+        \hline
+        PT05 & Network Latency & Verify response time from JDoodle API & API responses within 3-5 seconds & Pass \\
+        \hline
+    \end{tabular}
+    \caption{Performance Test Cases for Debug Defuse}
+    \label{tab:performance_tests}
+\end{table}
+

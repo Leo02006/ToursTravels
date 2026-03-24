@@ -1,0 +1,125 @@
+\documentclass[12pt,a4paper]{report}  
+\usepackage{graphicx}
+\usepackage{longtable}
+\usepackage{float}% Required for inserting images
+% Add additional packages here
+\usepackage{fancyhdr} % Required for header and footer
+\usepackage{titlesec}
+\usepackage{times}
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstdefinestyle{csharpstyle}{
+  language=[Sharp]C,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{blue},
+  commentstyle=\color{gray},
+  stringstyle=\color{red},
+  tabsize=2,
+  showspaces=false,
+  showstringspaces=false,
+  breaklines=true,
+  numbers=none
+}
+
+
+\usepackage{lipsum}
+\usepackage{geometry} 
+%\usepackage{hyperref} % Add this in your preamble if not already there
+\geometry{margin=1in}
+\usepackage{setspace} % Added package
+\usepackage[backend=biber,style=numeric]{biblatex}
+\addbibresource{references.bib} % Load the .bib file (ensure it's in the same directory)
+\setcounter{secnumdepth}{4}  % Enable numbering for subsubsubsections
+\setcounter{tocdepth}{4}  % Ensure it
+% Modify chapter formattingz
+\titleformat{\chapter}[hang]{\bfseries\Large}{\thechapter\ :}{1em}{}  
+
+
+
+
+\titleformat{\chapter}
+  {\vspace{-2cm} \centering\bfseries\LARGE} % Centered, bold, large font
+  {\thechapter}{1em}{}  
+
+\begin{document}
+
+\include{coverpage}
+\newpage
+\include{certificate}
+\newpage
+\setstretch{1.15} % Set line spacing to 1.15
+\pagenumbering{roman}
+\include{acknowledgement}
+\newpage
+\include{abstract}
+\newpage
+% Increase line spacing for TOC, List of Tables, and List of Figures
+\renewcommand{\baselinestretch}{1.15}  % Adjust this value for desired spacing
+\selectfont  % Apply the line spacing change
+
+% List of Tables (Centering) - Uses Roman numerals
+\addcontentsline{toc}{chapter}{LIST OF TABLES} % Adds to TOC
+\renewcommand{\listtablename}{\hfill \LARGE \textbf{LIST OF TABLES} \hfill} % Center Title
+\listoftables
+\newpage
+
+% List of Figures (Centering) - Uses Roman numerals
+\addcontentsline{toc}{chapter}{LIST OF FIGURES} % Adds to TOC
+\renewcommand{\listfigurename}{\hfill \LARGE \textbf{LIST OF FIGURES} \hfill} % Center Title
+\listoffigures
+\newpage
+
+% Table of Contents (Centering) - No numbering at all
+\renewcommand{\contentsname}{\hfill \LARGE \textbf{CONTENTS} \hfill} % Center Title
+
+\tableofcontents
+
+
+% Start main content with Arabic numbering
+\newpage
+\pagestyle{fancy}
+\fancyhf{}  
+\fancyhead[R]{{Debug Defuse}}
+
+% Footer with horizontal line
+\renewcommand{\footrulewidth}{0.4pt} % Thickness of the footer line
+\fancyfoot[L]{Department of Computer Applications, MACE} % Left Footer
+\fancyfoot[R]{\thepage} % Right Footer
+
+% Remove headers on the first page
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyhead[R]{{Debug Defuse}}
+  \renewcommand{\footrulewidth}{0.4pt} % Add line on first page
+  \fancyfoot[L]{Department of Computer Applications, MACE}
+  \fancyfoot[R]{\thepage}
+}
+% Define a page style without header and footer
+\fancypagestyle{noheaderfooter}{
+    \fancyhf{} % Clear header and footer
+    \renewcommand{\headrulewidth}{0pt} % Remove header line
+    \renewcommand{\footrulewidth}{0pt} % Remove footer line
+}
+\pagenumbering{arabic}
+
+% Include content titles
+\include{1_Introduction}
+\include{2_Supporting_Literature}
+\include{3_System_Analysis}
+\include{4_System_Design}
+\include{5_testing}
+\include{6_deployement}
+\include{7_Git_History}
+\include{8_Conclusion}
+\include{9_Future_works}
+\include{10_Appendix}
+
+% Bibliography Section
+\renewcommand{\bibname}{11 REFERENCES } 
+\addcontentsline{toc}{chapter}{11 REFERENCES }  % Adds "References" to ToC
+
+
+
+\end{document}
