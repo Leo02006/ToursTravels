@@ -8,6 +8,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { MapPin, Clock, ArrowRight, Search, X } from 'lucide-react'
 import { proxyImage, destinationImage } from '@/lib/imageProxy'
 import { useCurrency } from '@/lib/CurrencyContext'
+import { API_URL } from '@/config/api'
 
 type Tour = {
     _id?: string
@@ -38,7 +39,7 @@ export default function ToursPage() {
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages`, { credentials: 'include' })
+        fetch(`${API_URL}/packages`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => setTours(Array.isArray(data) ? data : []))
             .catch(err => console.error(err))

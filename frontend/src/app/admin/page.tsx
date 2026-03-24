@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
+import { API_URL } from '@/config/api'
 import { Card, CardContent, CardTitle, CardHeader } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { CheckCircle, XCircle, Shield, Briefcase, Calendar, Trash2, Users, MessageSquare, Download, Hash, UserCheck, AlertTriangle } from 'lucide-react'
@@ -26,7 +27,7 @@ export default function AdminDashboard() {
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 if (!data.user) router.push('/auth/login')
@@ -42,11 +43,11 @@ export default function AdminDashboard() {
         setLoading(true)
         try {
             const [pkgsRes, bksRes, compRes, usersRes, revRes] = await Promise.all([
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages`, { credentials: 'include' }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings`, { credentials: 'include' }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/admin/companies`, { credentials: 'include' }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/admin/users`, { credentials: 'include' }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/admin/reviews`, { credentials: 'include' })
+                fetch(`${API_URL}/packages`, { credentials: 'include' }),
+                fetch(`${API_URL}/bookings`, { credentials: 'include' }),
+                fetch(`${API_URL}/admin/companies`, { credentials: 'include' }),
+                fetch(`${API_URL}/admin/users`, { credentials: 'include' }),
+                fetch(`${API_URL}/admin/reviews`, { credentials: 'include' })
             ])
             const pkgs = await pkgsRes.json()
             const bks = await bksRes.json()
@@ -69,7 +70,7 @@ export default function AdminDashboard() {
 
     const handleCompanyStatus = async (id: string, status: string) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/companies/${id}`, {
+            const res = await fetch(`${API_URL}/admin/companies/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -85,7 +86,7 @@ export default function AdminDashboard() {
     const handleDeleteUser = async (id: string) => {
         if (!confirm('Permanently delete this user and all their records?')) return
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/users/${id}`, {
+            const res = await fetch(`${API_URL}/admin/users/${id}`, {
                 method: 'DELETE',
                 credentials: 'include'
             })
@@ -95,7 +96,7 @@ export default function AdminDashboard() {
 
     const handleReviewResponse = async (id: string, response: string) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/admin/reviews/${id}/respond`, {
+            const res = await fetch(`${API_URL}/admin/reviews/${id}/respond`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -133,7 +134,7 @@ export default function AdminDashboard() {
 
     const handleApproval = async (id: string, status: 'APPROVED' | 'REJECTED') => {
         try {
-            const res = await fetch(`http://localhost:5000/api/packages/${id}`, {
+            const res = await fetch(`${API_URL}/packages/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
@@ -151,7 +152,7 @@ export default function AdminDashboard() {
     const handleDelete = async (id: string) => {
         if (!confirm('Are you sure you want to permanently remove this package?')) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/packages/${id}`, {
+            const res = await fetch(`${API_URL}/packages/${id}`, {
                 method: 'DELETE',
                 credentials: 'include',
             })

@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
+import { API_URL } from '@/config/api'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent } from '@/components/ui/Card'
 import { MapPin, Clock, Users, ShieldCheck, CheckCircle2 } from 'lucide-react'
@@ -26,8 +27,8 @@ export default function TourDetailsPage() {
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/me`, { credentials: 'include' }).then(res => res.json()).then(data => setUser(data.user))
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages?id=${id}`, { credentials: 'include' }) 
+        fetch(`${API_URL}/auth/me`, { credentials: 'include' }).then(res => res.json()).then(data => setUser(data.user))
+        fetch(`${API_URL}/packages?id=${id}`, { credentials: 'include' }) 
             .then(res => res.json())
             .then(data => {
                 const found = data.find((t: any) => String(t._id || t.id) === id)
@@ -36,7 +37,7 @@ export default function TourDetailsPage() {
                     setSelectedDate(found.availableDates[0])
                 }
             })
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/reviews/package/${id}`)
+        fetch(`${API_URL}/reviews/package/${id}`)
             .then(res => res.json())
             .then(data => setReviews(Array.isArray(data) ? data : []))
             .catch(err => console.error(err))
@@ -51,7 +52,7 @@ export default function TourDetailsPage() {
         setBookingLoading(true)
         setError('')
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings`, {
+            const res = await fetch(`${API_URL}/bookings`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

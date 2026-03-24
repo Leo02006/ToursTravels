@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
+import { API_URL } from '@/config/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
 import { Plus, Package, Calendar, Users, Briefcase, Pencil, Trash2, MapPin, Clock } from 'lucide-react'
@@ -22,7 +23,7 @@ export default function CompanyDashboard() {
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 if (!data.user) router.push('/auth/login')
@@ -44,8 +45,8 @@ export default function CompanyDashboard() {
         try {
             const [pkgRes, bkRes] = await Promise.all([
                 // Only fetch THIS company's packages using companyId filter
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages?companyId=${companyProfileId}`, { credentials: 'include' }),
-                fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings`, { credentials: 'include' })
+                fetch(`${API_URL}/packages?companyId=${companyProfileId}`, { credentials: 'include' }),
+                fetch(`${API_URL}/bookings`, { credentials: 'include' })
             ])
             const pkgs = await pkgRes.json()
             const bks = await bkRes.json()
@@ -60,7 +61,7 @@ export default function CompanyDashboard() {
         if (!confirm('Are you sure you want to delete this package? This cannot be undone.')) return
         setDeletingId(pkgId)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages/${pkgId}`, {
+            const res = await fetch(`${API_URL}/packages/${pkgId}`, {
                 method: 'DELETE',
                 credentials: 'include'
             })

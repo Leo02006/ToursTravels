@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
+import { API_URL } from '@/config/api'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { MapPin, Calendar, CheckCircle2 } from 'lucide-react'
 import { useCurrency } from '@/lib/CurrencyContext'
@@ -22,7 +23,7 @@ export default function CustomerDashboard() {
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 if (!data.user) router.push('/auth/login')
@@ -37,7 +38,7 @@ export default function CustomerDashboard() {
         const fetchBookings = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings`, { credentials: 'include' });
+                const res = await fetch(`${API_URL}/bookings`, { credentials: 'include' });
                 if (!res.ok) {
                     throw new Error(`HTTP error! status: ${res.status}`);
                 }
@@ -59,14 +60,14 @@ export default function CustomerDashboard() {
         if (!confirm('Are you sure you want to cancel this booking? A 20% cancellation fee may apply.')) return;
         setActionLoading(true)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings/${bookingId}/cancel`, {
+            const res = await fetch(`${API_URL}/bookings/${bookingId}/cancel`, {
                 method: 'PUT',
                 credentials: 'include'
             })
             if (!res.ok) throw new Error('Cancellation failed')
             alert('Booking cancelled successfully and refund initiated')
             // Refresh bookings
-            const bRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings`, { credentials: 'include' })
+            const bRes = await fetch(`${API_URL}/bookings`, { credentials: 'include' })
             const data = await bRes.json()
             setBookings(Array.isArray(data) ? data : [])
         } catch (err: any) {
@@ -79,7 +80,7 @@ export default function CustomerDashboard() {
     const submitReview = async (packageId: string) => {
         setActionLoading(true)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/reviews`, {
+            const res = await fetch(`${API_URL}/reviews`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

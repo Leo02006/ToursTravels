@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
+import { API_URL } from '@/config/api'
 
 export default function NewPackagePage() {
     const router = useRouter()
@@ -29,7 +30,7 @@ export default function NewPackagePage() {
     const [imageFile, setImageFile] = useState<File | null>(null)
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/me`, { credentials: 'include' }).then(res => res.json()).then(data => {
+        fetch(`${API_URL}/auth/me`, { credentials: 'include' }).then(res => res.json()).then(data => {
             if (!data.user || data.user.role !== 'COMPANY') router.push('/auth/login')
             else setUser(data.user)
         })
@@ -48,7 +49,7 @@ export default function NewPackagePage() {
                 const uploadData = new FormData()
                 uploadData.append('image', imageFile)
 
-                const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/upload`, {
+                const uploadRes = await fetch(`${API_URL}/upload`, {
                     method: 'POST',
                     body: uploadData,
                     credentials: 'include'
@@ -64,7 +65,7 @@ export default function NewPackagePage() {
             }
 
             // 2. Create the package with the uploaded image URL
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages`, {
+            const res = await fetch(`${API_URL}/packages`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

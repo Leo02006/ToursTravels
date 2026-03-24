@@ -20,7 +20,7 @@ export default function TrackBookingPage() {
         setError('')
         setBooking(null)
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings/status/${bookingId.trim()}`)
+            const res = await fetch(`${API_URL}/bookings/status/${bookingId.trim()}`)
             const data = await res.json()
             if (!res.ok) throw new Error(data.error || 'Booking not found')
             setBooking(data.details)

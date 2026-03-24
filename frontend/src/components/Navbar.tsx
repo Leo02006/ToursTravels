@@ -7,6 +7,7 @@ import { Button } from './ui/Button'
 import { useRouter } from 'next/navigation'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { CURRENCIES } from '@/lib/currencies'
+import { API_URL } from '@/config/api'
 
 export function Navbar() {
     const [user, setUser] = useState<{ name: string, role: string } | null>(null)
@@ -16,7 +17,7 @@ export function Navbar() {
     const { currency, setCurrency } = useCurrency()
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 if (data.user) setUser(data.user)
@@ -25,7 +26,7 @@ export function Navbar() {
     }, [])
 
     const handleLogout = async () => {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/logout`, { method: 'POST', credentials: 'include' })
+        await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' })
         setUser(null)
         router.push('/')
         router.refresh()

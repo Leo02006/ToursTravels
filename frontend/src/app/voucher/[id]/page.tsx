@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'next/navigation'
 import { useCurrency } from '@/lib/CurrencyContext'
+import { API_URL } from '@/config/api'
 import { proxyImage } from '@/lib/imageProxy'
 import { formatDate } from '@/lib/dateUtils'
 
@@ -12,7 +13,7 @@ export default function VoucherPage() {
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/bookings/status/${id}`)
+        fetch(`${API_URL}/bookings/status/${id}`)
             .then(res => res.json())
             .then(data => {
                 if (data.details) {

@@ -6,6 +6,7 @@ import { Navbar } from '@/components/Navbar'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { GlobeLoader } from '@/components/ui/GlobeLoader'
 import { Button } from '@/components/ui/Button'
+import { API_URL } from '@/config/api'
 import { CheckCircle2 } from 'lucide-react'
 import { proxyImage } from '@/lib/imageProxy'
 
@@ -37,14 +38,14 @@ export default function EditPackagePage() {
 
     useEffect(() => {
         // Verify user is a company
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 if (!data.user || data.user.role !== 'COMPANY') router.push('/auth/login')
             })
 
         // Load existing package data
-        fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages`, { credentials: 'include' })
+        fetch(`${API_URL}/packages`, { credentials: 'include' })
             .then(res => res.json())
             .then(packages => {
                 const pkg = packages.find((p: any) => String(p._id || p.id) === id)
@@ -82,7 +83,7 @@ export default function EditPackagePage() {
                 const uploadData = new FormData()
                 uploadData.append('image', imageFile)
 
-                const uploadRes = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/upload`, {
+                const uploadRes = await fetch(`${API_URL}/upload`, {
                     method: 'POST',
                     body: uploadData,
                     credentials: 'include'
@@ -98,7 +99,7 @@ export default function EditPackagePage() {
             }
 
             // 2. Update package
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages/${id}`, {
+            const res = await fetch(`${API_URL}/packages/${id}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',

@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { Navbar } from '@/components/Navbar'
+import { API_URL } from '@/config/api'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { MapPin, Calendar, Clock, ArrowRight, PlaneTakeoff } from 'lucide-react'
@@ -26,7 +27,7 @@ export default function Home() {
   const [tours, setTours] = useState<Tour[]>([])
 
   useEffect(() => {
-    fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/packages`, { credentials: 'include' })
+    fetch(`${API_URL}/packages`, { credentials: 'include' })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {

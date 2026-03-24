@@ -7,6 +7,7 @@ import { Navbar } from '@/components/Navbar'
 import { Button } from '@/components/ui/Button'
 import { Card, CardContent, CardHeader, CardTitle, CardFooter } from '@/components/ui/Card'
 import { Mail, Lock } from 'lucide-react'
+import { API_URL } from '@/config/api'
 
 export default function LoginPage() {
     const [email, setEmail] = useState('')
@@ -21,7 +22,7 @@ export default function LoginPage() {
         setLoading(true)
 
         try {
-            const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api'}/auth/login`, {
+            const res = await fetch(`${API_URL}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 credentials: 'include',
