@@ -8,6 +8,9 @@ export function proxyImage(url: string | null | undefined): string | null {
     if (!url || !url.trim()) return null
     const trimmed = url.trim()
 
+    // 0. Handle base64 immediately
+    if (trimmed.startsWith('data:image/')) return trimmed;
+
     // 1. Handle our own uploaded images (/uploads/ pattern)
     // If the URL contains '/uploads/', it's a file from our backend.
     // We should ensure it uses the CURRENT API domain to be portable between environments.

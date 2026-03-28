@@ -4,9 +4,9 @@ import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { API_URL } from '@/config/api'
-import { Card, CardContent } from '@/components/ui/Card'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Plus, Package, Calendar, Users, Briefcase, Pencil, Trash2, MapPin, Clock } from 'lucide-react'
+import { Plus, Package, Calendar, Users, Briefcase, Pencil, Trash2, MapPin, Clock, User, Shield, Mail } from 'lucide-react'
 import { GlobeLoader } from '@/components/ui/GlobeLoader'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { proxyImage, destinationImage } from '@/lib/imageProxy'
@@ -18,7 +18,7 @@ export default function CompanyDashboard() {
     const [bookings, setBookings] = useState<any[]>([])
     const [loading, setLoading] = useState(true)
     const [deletingId, setDeletingId] = useState<string | null>(null)
-    const [activeTab, setActiveTab] = useState<'packages' | 'bookings'>('packages')
+    const [activeTab, setActiveTab] = useState<'packages' | 'bookings' | 'profile'>('packages')
     const router = useRouter()
     const { format } = useCurrency()
 
@@ -118,6 +118,75 @@ export default function CompanyDashboard() {
                         </div>
                     )}
 
+                    {/* Tab Navigation */}
+                    <div className="flex flex-wrap gap-4 border-b border-slate-200 mb-8">
+                        <button 
+                            onClick={() => setActiveTab('packages')}
+                            className={`pb-4 px-2 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'packages' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            <Package className="w-4 h-4" /> My Packages ({myPackages.length})
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('bookings')}
+                            className={`pb-4 px-2 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'bookings' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            <Calendar className="w-4 h-4" /> Bookings ({bookings.length})
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('profile')}
+                            className={`pb-4 px-2 font-bold text-sm transition-all flex items-center gap-2 ${activeTab === 'profile' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            <User className="w-4 h-4" /> Business Profile
+                        </button>
+                    </div>
+
+                    {activeTab === 'profile' ? (
+                        <div className="animate-in fade-in slide-in-from-bottom-4">
+                            <Card className="max-w-3xl overflow-hidden">
+                                <CardHeader className="bg-slate-900 text-white p-8">
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-20 h-20 rounded-2xl bg-white/10 flex items-center justify-center backdrop-blur-md">
+                                            <Briefcase className="w-10 h-10 text-white" />
+                                        </div>
+                                        <div>
+                                            <CardTitle className="text-2xl text-white">{user.companyProfile?.companyName}</CardTitle>
+                                            <p className="text-slate-400 font-medium">Verified Tour Agency</p>
+                                        </div>
+                                        <div className="ml-auto">
+                                            <span className={`px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-widest ${user.companyProfile?.approvalStatus === 'APPROVED' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-400 border border-amber-500/30'}`}>
+                                                {user.companyProfile?.approvalStatus}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </CardHeader>
+                                <CardContent className="p-8 space-y-8">
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                        <div className="space-y-1">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><User className="w-3 h-3" /> Representative Name</p>
+                                            <p className="text-lg font-bold text-slate-900">{user.name}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Mail className="w-3 h-3" /> Business Email</p>
+                                            <p className="text-lg font-bold text-slate-900">{user.email}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Clock className="w-3 h-3" /> Member Since</p>
+                                            <p className="text-lg font-bold text-slate-900">{formatDate(user.createdAt)}</p>
+                                        </div>
+                                        <div className="space-y-1">
+                                            <p className="text-xs font-black text-slate-400 uppercase tracking-widest flex items-center gap-2"><Shield className="w-3 h-3" /> Application Status</p>
+                                            <p className="text-lg font-bold text-blue-600">{user.companyProfile?.approvalStatus}</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="pt-8 border-t border-slate-100 italic text-slate-400 text-sm">
+                                        To update your company information, please contact the administrator support.
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    ) : (
+                        <>
                     {/* Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                         <Card className="bg-blue-600 border-none text-white shadow-lg overflow-hidden relative">
@@ -285,6 +354,8 @@ export default function CompanyDashboard() {
                         </div>
                     )}
 
+                        </>
+                    )}
                 </div>
             </div>
         </>

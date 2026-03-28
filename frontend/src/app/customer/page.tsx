@@ -4,7 +4,7 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { API_URL } from '@/config/api'
-import { Card, CardContent, CardTitle } from '@/components/ui/Card'
+import { Card, CardContent, CardTitle, CardHeader } from '@/components/ui/Card'
 import { MapPin, Calendar, CheckCircle2, Bell } from 'lucide-react'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { GlobeLoader } from '@/components/ui/GlobeLoader'
@@ -22,6 +22,7 @@ export default function CustomerDashboard() {
     const [notifications, setNotifications] = useState<any[]>([])
     const [showNotifs, setShowNotifs] = useState(false)
     const [hasViewedNotifs, setHasViewedNotifs] = useState(false)
+    const [activeTab, setActiveTab] = useState<'trips' | 'profile'>('trips')
     const notifRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
     const { format } = useCurrency()
@@ -186,7 +187,63 @@ export default function CustomerDashboard() {
                         </div>
                     </div>
 
-                    <h2 className="text-xl font-bold text-slate-900 mt-4">Your Booking History</h2>
+                    {/* Tab Navigation */}
+                    <div className="flex gap-4 border-b border-slate-200">
+                        <button 
+                            onClick={() => setActiveTab('trips')}
+                            className={`pb-4 px-2 font-bold text-sm transition-all ${activeTab === 'trips' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            My Trips
+                        </button>
+                        <button 
+                            onClick={() => setActiveTab('profile')}
+                            className={`pb-4 px-2 font-bold text-sm transition-all ${activeTab === 'profile' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-slate-500 hover:text-slate-700'}`}
+                        >
+                            My Profile
+                        </button>
+                    </div>
+
+                    {activeTab === 'profile' ? (
+                        <div className="animate-in fade-in slide-in-from-bottom-4">
+                            <Card className="max-w-2xl">
+                                <CardHeader>
+                                    <CardTitle>Account Details</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-6">
+                                    <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
+                                        <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-2xl font-bold">
+                                            {user.name?.[0]?.toUpperCase()}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-slate-500 font-medium">Full Name</p>
+                                            <p className="text-xl font-bold text-slate-900">{user.name}</p>
+                                        </div>
+                                    </div>
+
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                        <div className="p-4 border border-slate-100 rounded-2xl">
+                                            <p className="text-sm text-slate-500 font-medium mb-1">Email Address</p>
+                                            <p className="font-bold text-slate-900">{user.email}</p>
+                                        </div>
+                                        <div className="p-4 border border-slate-100 rounded-2xl">
+                                            <p className="text-sm text-slate-500 font-medium mb-1">Account Role</p>
+                                            <p className="font-bold text-slate-900">{user.role}</p>
+                                        </div>
+                                        <div className="p-4 border border-slate-100 rounded-2xl">
+                                            <p className="text-sm text-slate-500 font-medium mb-1">Member Since</p>
+                                            <p className="font-bold text-slate-900">{formatDate(user.createdAt)}</p>
+                                        </div>
+                                        <div className="p-4 border border-slate-100 rounded-2xl">
+                                            <p className="text-sm text-slate-500 font-medium mb-1">User ID</p>
+                                            <p className="text-xs font-mono text-slate-400">{user.id || user._id}</p>
+                                        </div>
+                                    </div>
+                                </CardContent>
+                            </Card>
+                        </div>
+                    ) : (
+                        <>
+                            <h2 className="text-xl font-bold text-slate-900 mt-4">Your Booking History</h2>
 
                     {bookings.length === 0 ? (
                         <Card className="text-center py-16">
@@ -284,6 +341,7 @@ export default function CustomerDashboard() {
                                 </Card>
                             ))}
                         </div>
+                    )}</>
                     )}
 
                 </div>

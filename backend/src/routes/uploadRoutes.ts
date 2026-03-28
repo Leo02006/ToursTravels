@@ -13,17 +13,7 @@ if (!fs.existsSync(uploadDir)) {
 }
 
 // Configure multer storage
-const storage = multer.diskStorage({
-    destination: (req, file, cb) => {
-        cb(null, uploadDir);
-    },
-    filename: (req, file, cb) => {
-        // Create unique filename: originalname + timestamp + extension
-        const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-        const ext = path.extname(file.originalname);
-        cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-    }
-});
+const storage = multer.memoryStorage();
 
 // Configure multer upload limits and file filtering
 const upload = multer({
@@ -55,14 +45,13 @@ router.post('/', protect as any, (req, res, next) => {
                 return res.status(400).json({ error: 'No file uploaded' });
             }
 
-            // Return the public URL for the image
-            // Dynamically detect the host if UPLOAD_BASE_URL is not provided
-            const baseUrl = process.env.UPLOAD_BASE_URL || `${req.protocol}://${req.get('host')}`;
-            const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+            // Convert file buffer to base64 Data URL to bypass ephemeral disk issues on Render
+            const b64 = Buffer.from(req.file.buffer).toString('base64');
+            const imageUrl = `data:${req.file.mimetype};base64,${b64}`;
 
             res.status(200).json({
                 message: 'File uploaded successfully',
-                imageUrl: imageUrl
+                imageUrl
             });
         } catch (error: any) {
             res.status(500).json({ error: error.message || 'File upload failed' });

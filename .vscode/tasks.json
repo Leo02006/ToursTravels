@@ -1,0 +1,39 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Run Frontend",
+            "type": "npm",
+            "script": "dev",
+            "path": "frontend",
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "group": "frontend"
+            }
+        },
+        {
+            "label": "Run Backend",
+            "type": "npm",
+            "script": "dev",
+            "path": "backend",
+            "problemMatcher": [],
+            "isBackground": true,
+            "presentation": {
+                "group": "backend"
+            }
+        },
+        {
+            "label": "Run All Servers",
+            "dependsOn": [
+                "Run Frontend",
+                "Run Backend"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": []
+        }
+    ]
+}

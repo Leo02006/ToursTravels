@@ -13,6 +13,8 @@ export default function RegisterPage() {
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+    const [confirmPassword, setConfirmPassword] = useState('')
+    const [showPassword, setShowPassword] = useState(false)
     const [role, setRole] = useState('CUSTOMER')
     const [companyName, setCompanyName] = useState('')
     const [error, setError] = useState('')
@@ -23,6 +25,12 @@ export default function RegisterPage() {
         e.preventDefault()
         setError('')
         setLoading(true)
+
+        if (password !== confirmPassword) {
+            setError('Passwords do not match')
+            setLoading(false)
+            return
+        }
 
         try {
             const res = await fetch(`${API_URL}/auth/register`, {
@@ -95,9 +103,31 @@ export default function RegisterPage() {
                                 <div className="relative">
                                     <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
                                     <input
-                                        type="password"
+                                        type={showPassword ? "text" : "password"}
                                         value={password}
                                         onChange={e => setPassword(e.target.value)}
+                                        required
+                                        className="w-full pl-10 pr-12 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
+                                        placeholder="••••••••"
+                                    />
+                                    <button 
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-3 top-3 text-slate-400 hover:text-slate-600 transition"
+                                    >
+                                        {showPassword ? <span className="text-xs font-bold">HIDE</span> : <span className="text-xs font-bold">SHOW</span>}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className="space-y-1.5">
+                                <label className="text-sm font-medium text-slate-700">Confirm Password</label>
+                                <div className="relative">
+                                    <Lock className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        value={confirmPassword}
+                                        onChange={e => setConfirmPassword(e.target.value)}
                                         required
                                         className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition"
                                         placeholder="••••••••"

@@ -23,6 +23,7 @@ export default function AdminDashboard() {
     const [currentTab, setCurrentTab] = useState<'OVERVIEW' | 'COMPANIES' | 'USERS' | 'FEEDBACK'>('OVERVIEW')
     const [loading, setLoading] = useState(true)
     const [adminMsg, setAdminMsg] = useState({ type: '', text: '' })
+    const [viewingProfile, setViewingProfile] = useState<any>(null)
     const router = useRouter()
     const { format } = useCurrency()
 
@@ -485,6 +486,62 @@ export default function AdminDashboard() {
 
                 </div>
             </div>
+
+            {/* Profile Modal */}
+            {viewingProfile && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-in fade-in">
+                    <Card className="w-full max-w-lg shadow-2xl animate-in zoom-in-95">
+                        <CardHeader className="flex flex-row items-center justify-between space-y-0">
+                            <CardTitle>{viewingProfile.type === 'COMPANY' ? 'Agency Profile' : 'Customer Profile'}</CardTitle>
+                            <button onClick={() => setViewingProfile(null)} className="p-2 hover:bg-slate-100 rounded-lg transition">✕</button>
+                        </CardHeader>
+                        <CardContent className="p-6 space-y-6">
+                            <div className="flex items-center gap-4 p-4 bg-slate-50 rounded-2xl">
+                                <div className="w-16 h-16 rounded-full bg-slate-200 flex items-center justify-center text-slate-500 text-2xl font-bold">
+                                    {(viewingProfile.type === 'COMPANY' ? viewingProfile.data.companyName?.[0] : viewingProfile.data.name?.[0])?.toUpperCase()}
+                                </div>
+                                <div>
+                                    <h3 className="text-xl font-bold text-slate-900">
+                                        {viewingProfile.type === 'COMPANY' ? viewingProfile.data.companyName : viewingProfile.data.name}
+                                    </h3>
+                                    <p className="text-sm text-slate-500 font-medium">
+                                        {viewingProfile.type === 'COMPANY' ? 'Verified Agency' : 'Active Customer'}
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="space-y-4">
+                                <div className="flex justify-between border-b border-slate-50 pb-2">
+                                    <span className="text-slate-500 text-sm">Email Address</span>
+                                    <span className="font-bold text-slate-900">{viewingProfile.type === 'COMPANY' ? viewingProfile.data.userId?.email : viewingProfile.data.email}</span>
+                                </div>
+                                <div className="flex justify-between border-b border-slate-50 pb-2">
+                                    <span className="text-slate-500 text-sm">Joined On</span>
+                                    <span className="font-bold text-slate-900">{formatDate(viewingProfile.data.createdAt)}</span>
+                                </div>
+                                {viewingProfile.type === 'COMPANY' && (
+                                    <>
+                                        <div className="flex justify-between border-b border-slate-50 pb-2">
+                                            <span className="text-slate-500 text-sm">Approval Status</span>
+                                            <span className="font-bold text-blue-600 capitalize">{viewingProfile.data.approvalStatus}</span>
+                                        </div>
+                                        <div className="flex justify-between border-b border-slate-50 pb-2">
+                                            <span className="text-slate-500 text-sm">Rep. Name</span>
+                                            <span className="font-bold text-slate-900">{viewingProfile.data.userId?.name}</span>
+                                        </div>
+                                    </>
+                                )}
+                                <div className="flex justify-between border-b border-slate-50 pb-2">
+                                    <span className="text-slate-500 text-sm">Database ID</span>
+                                    <span className="text-[10px] font-mono text-slate-400">{viewingProfile.data._id}</span>
+                                </div>
+                            </div>
+                            
+                            <Button onClick={() => setViewingProfile(null)} className="w-full mt-4">Close Profile</Button>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </>
     )
 }
