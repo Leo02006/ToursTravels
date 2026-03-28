@@ -25,20 +25,31 @@ type Tour = {
 export default function Home() {
   const { format } = useCurrency()
   const [tours, setTours] = useState<Tour[]>([])
+  const [collageImages, setCollageImages] = useState<string[]>([])
 
   useEffect(() => {
     fetch(`${API_URL}/packages`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {
-          // Filter to only show packages strictly added by a company (skip any test packages without one)
-          const validCompanyPackages = data.filter((pkg: any) => pkg.company && pkg.company.companyName)
+          // Filter to only show packages strictly added by a company
+          const validCompanyPackages = data.filter((pkg: any) => pkg.company && pkg.company.companyName && pkg.approvalStatus === 'APPROVED')
           setTours(validCompanyPackages.slice(0, 6)) // Show max 6 in featured section
+
+          // Extract all available approved images for the montage
+          const images = validCompanyPackages
+            .map((pkg: any) => proxyImage(pkg.imageUrl) || destinationImage(pkg.destination, pkg._id || pkg.id))
+            .filter(Boolean) as string[]
+          setCollageImages(images)
         }
       })
-      .catch(() => { }) // Silently fallback to empty (no mock data)
+      .catch(() => { })
       .finally(() => { })
   }, [])
+
+  const getColImg = (flatIndex: number, defaultUrl: string) => {
+    return collageImages[flatIndex] || defaultUrl
+  }
 
   return (
     <>
@@ -52,47 +63,47 @@ export default function Home() {
            
             {/* Column 1 - Travels Up: Taj Mahal, Colosseum, Machu Picchu, Burj Khalifa, Petra */}
             <div className="flex-1 flex flex-col gap-4 md:gap-8 animate-marquee-vertical">
-               <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=70&w=600" className="w-full h-[400px] object-cover rounded-3xl" alt="Taj Mahal" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=70&w=600" className="w-full h-[600px] object-cover rounded-3xl" alt="Colosseum" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&q=70&w=600" className="w-full h-[500px] object-cover rounded-3xl" alt="Machu Picchu" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=70&w=600" className="w-full h-[450px] object-cover rounded-3xl" alt="Burj Khalifa" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1580977276076-ae4b8c219b8e?auto=format&fit=crop&q=70&w=600" className="w-full h-[550px] object-cover rounded-3xl" alt="Petra" decoding="async" />
+               <img src={getColImg(0, "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=70&w=600")} className="w-full h-[400px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(1, "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=70&w=600")} className="w-full h-[600px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(2, "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&q=70&w=600")} className="w-full h-[500px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(3, "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=70&w=600")} className="w-full h-[450px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(4, "https://images.unsplash.com/photo-1580977276076-ae4b8c219b8e?auto=format&fit=crop&q=70&w=600")} className="w-full h-[550px] object-cover rounded-3xl" alt="Destination" decoding="async" />
                {/* Duplicates for Loop */}
-               <img src="https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=70&w=600" className="w-full h-[400px] object-cover rounded-3xl" alt="Taj Mahal" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=70&w=600" className="w-full h-[600px] object-cover rounded-3xl" alt="Colosseum" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&q=70&w=600" className="w-full h-[500px] object-cover rounded-3xl" alt="Machu Picchu" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=70&w=600" className="w-full h-[450px] object-cover rounded-3xl" alt="Burj Khalifa" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1580977276076-ae4b8c219b8e?auto=format&fit=crop&q=70&w=600" className="w-full h-[550px] object-cover rounded-3xl" alt="Petra" decoding="async" aria-hidden="true" />
+               <img src={getColImg(0, "https://images.unsplash.com/photo-1524492412937-b28074a5d7da?auto=format&fit=crop&q=70&w=600")} className="w-full h-[400px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(1, "https://images.unsplash.com/photo-1552832230-c0197dd311b5?auto=format&fit=crop&q=70&w=600")} className="w-full h-[600px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(2, "https://images.unsplash.com/photo-1526392060635-9d6019884377?auto=format&fit=crop&q=70&w=600")} className="w-full h-[500px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(3, "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?auto=format&fit=crop&q=70&w=600")} className="w-full h-[450px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(4, "https://images.unsplash.com/photo-1580977276076-ae4b8c219b8e?auto=format&fit=crop&q=70&w=600")} className="w-full h-[550px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
             </div>
 
             {/* Column 2 - Travels Down: Eiffel Tower, Great Wall, Grand Canyon, Big Ben, Christ Redemmer */}
             <div className="flex-1 flex flex-col gap-4 md:gap-8 animate-marquee-vertical-reverse mt-[-1200px]">
-               <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&q=70&w=600" className="w-full h-[600px] object-cover rounded-3xl" alt="Eiffel Tower" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&q=70&w=600" className="w-full h-[400px] object-cover rounded-3xl" alt="Great Wall" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&q=70&w=600" className="w-full h-[500px] object-cover rounded-3xl" alt="Grand Canyon" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&q=70&w=600" className="w-full h-[550px] object-cover rounded-3xl" alt="Big Ben" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=70&w=600" className="w-full h-[450px] object-cover rounded-3xl" alt="Christ The Redeemer" decoding="async" />
+               <img src={getColImg(5, "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&q=70&w=600")} className="w-full h-[600px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(6, "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&q=70&w=600")} className="w-full h-[400px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(7, "https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&q=70&w=600")} className="w-full h-[500px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(8, "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&q=70&w=600")} className="w-full h-[550px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(9, "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=70&w=600")} className="w-full h-[450px] object-cover rounded-3xl" alt="Destination" decoding="async" />
                {/* Duplicates for Loop */}
-               <img src="https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&q=70&w=600" className="w-full h-[600px] object-cover rounded-3xl" alt="Eiffel Tower" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&q=70&w=600" className="w-full h-[400px] object-cover rounded-3xl" alt="Great Wall" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&q=70&w=600" className="w-full h-[500px] object-cover rounded-3xl" alt="Grand Canyon" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&q=70&w=600" className="w-full h-[550px] object-cover rounded-3xl" alt="Big Ben" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=70&w=600" className="w-full h-[450px] object-cover rounded-3xl" alt="Christ The Redeemer" decoding="async" aria-hidden="true" />
+               <img src={getColImg(5, "https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?auto=format&fit=crop&q=70&w=600")} className="w-full h-[600px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(6, "https://images.unsplash.com/photo-1508804185872-d7badad00f7d?auto=format&fit=crop&q=70&w=600")} className="w-full h-[400px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(7, "https://images.unsplash.com/photo-1474044159687-1ee9f3a51722?auto=format&fit=crop&q=70&w=600")} className="w-full h-[500px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(8, "https://images.unsplash.com/photo-1529655683826-aba9b3e77383?auto=format&fit=crop&q=70&w=600")} className="w-full h-[550px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(9, "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&q=70&w=600")} className="w-full h-[450px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
             </div>
 
             {/* Column 3 - Travels Up: Statue of Liberty, Santorini, Sydney Opera, Giza Pyramids, Golden Gate */}
             <div className="flex-1 flex flex-col gap-4 md:gap-8 animate-marquee-vertical hidden md:flex">
-               <img src="https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?auto=format&fit=crop&q=70&w=600" className="w-full h-[500px] object-cover rounded-3xl" alt="Statue of Liberty" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=70&w=600" className="w-full h-[600px] object-cover rounded-3xl" alt="Santorini" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&q=70&w=600" className="w-full h-[400px] object-cover rounded-3xl" alt="Sydney Opera House" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&q=70&w=600" className="w-full h-[550px] object-cover rounded-3xl" alt="Giza Pyramids" decoding="async" />
-               <img src="https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&q=70&w=600" className="w-full h-[450px] object-cover rounded-3xl" alt="Golden Gate Bridge" decoding="async" />
+               <img src={getColImg(10, "https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?auto=format&fit=crop&q=70&w=600")} className="w-full h-[500px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(11, "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=70&w=600")} className="w-full h-[600px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(12, "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&q=70&w=600")} className="w-full h-[400px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(13, "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&q=70&w=600")} className="w-full h-[550px] object-cover rounded-3xl" alt="Destination" decoding="async" />
+               <img src={getColImg(14, "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&q=70&w=600")} className="w-full h-[450px] object-cover rounded-3xl" alt="Destination" decoding="async" />
                {/* Duplicates for Loop */}
-               <img src="https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?auto=format&fit=crop&q=70&w=600" className="w-full h-[500px] object-cover rounded-3xl" alt="Statue of Liberty" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=70&w=600" className="w-full h-[600px] object-cover rounded-3xl" alt="Santorini" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&q=70&w=600" className="w-full h-[400px] object-cover rounded-3xl" alt="Sydney Opera House" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&q=70&w=600" className="w-full h-[550px] object-cover rounded-3xl" alt="Giza Pyramids" decoding="async" aria-hidden="true" />
-               <img src="https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&q=70&w=600" className="w-full h-[450px] object-cover rounded-3xl" alt="Golden Gate Bridge" decoding="async" aria-hidden="true" />
+               <img src={getColImg(10, "https://images.unsplash.com/photo-1605130284535-11dd9eedc58a?auto=format&fit=crop&q=70&w=600")} className="w-full h-[500px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(11, "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?auto=format&fit=crop&q=70&w=600")} className="w-full h-[600px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(12, "https://images.unsplash.com/photo-1506973035872-a4ec16b8e8d9?auto=format&fit=crop&q=70&w=600")} className="w-full h-[400px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(13, "https://images.unsplash.com/photo-1503177119275-0aa32b3a9368?auto=format&fit=crop&q=70&w=600")} className="w-full h-[550px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
+               <img src={getColImg(14, "https://images.unsplash.com/photo-1449034446853-66c86144b0ad?auto=format&fit=crop&q=70&w=600")} className="w-full h-[450px] object-cover rounded-3xl" alt="Destination" decoding="async" aria-hidden="true" />
             </div>
         </div>
 
