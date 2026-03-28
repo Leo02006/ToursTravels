@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { API_URL } from '@/config/api'
@@ -21,8 +21,20 @@ export default function CustomerDashboard() {
     const [actionLoading, setActionLoading] = useState(false)
     const [notifications, setNotifications] = useState<any[]>([])
     const [showNotifs, setShowNotifs] = useState(false)
+    const [hasViewedNotifs, setHasViewedNotifs] = useState(false)
+    const notifRef = useRef<HTMLDivElement>(null)
     const router = useRouter()
     const { format } = useCurrency()
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+                setShowNotifs(false)
+            }
+        }
+        document.addEventListener('mousedown', handleClickOutside)
+        return () => document.removeEventListener('mousedown', handleClickOutside)
+    }, [])
 
     useEffect(() => {
         fetch(`${API_URL}/auth/me`, { credentials: 'include', cache: 'no-store' })
@@ -139,10 +151,10 @@ export default function CustomerDashboard() {
                         </div>
                         <div className="flex items-center gap-4">
                             {/* Notification Bell */}
-                            <div className="relative">
-                                <button onClick={() => setShowNotifs(!showNotifs)} className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 relative transition">
+                            <div className="relative" ref={notifRef}>
+                                <button onClick={() => { setShowNotifs(!showNotifs); setHasViewedNotifs(true); }} className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 relative transition">
                                     <Bell className="w-6 h-6 text-slate-600" />
-                                    {notifications.length > 0 && (
+                                    {notifications.length > 0 && !hasViewedNotifs && (
                                         <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
                                     )}
                                 </button>
