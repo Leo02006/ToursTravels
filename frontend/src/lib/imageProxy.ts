@@ -1,3 +1,5 @@
+import { API_URL } from '@/config/api';
+
 /**
  * Proxies any direct image URL (ending in .jpg, .png, etc.) through images.weserv.nl
  * to bypass CORS. Returns null for non-image URLs (webpages).
@@ -5,14 +7,27 @@
 export function proxyImage(url: string | null | undefined): string | null {
     if (!url || !url.trim()) return null
     const trimmed = url.trim()
+
+    // 1. Handle our own uploaded images (/uploads/ pattern)
+    // If the URL contains '/uploads/', it's a file from our backend.
+    // We should ensure it uses the CURRENT API domain to be portable between environments.
+    if (trimmed.includes('/uploads/')) {
+        const filename = trimmed.split('/').pop();
+        const backendBase = API_URL.replace(/\/api$/, '');
+        return `${backendBase}/uploads/${filename}`;
+    }
+
+    // 2. Return directly for 'safe' hosts that don't need proxying
     if (
         trimmed.startsWith('/') || 
         trimmed.includes('weserv.nl') || 
         trimmed.includes('localhost') || 
-        trimmed.includes('127.0.0.1')
-    ) return trimmed
+        trimmed.includes('127.0.0.1') ||
+        trimmed.includes('[::1]') ||
+        trimmed.includes('onrender.com') 
+    ) return trimmed;
 
-    // Only proxy actual image file URLs or known image CDNs
+    // 3. Only proxy actual image file URLs or known image CDNs
     const imageExtensions = /\.(jpg|jpeg|png|webp|gif|avif|svg)(\?.*)?$/i
     const imageCdns = /(googleusercontent|gstatic|unsplash|cloudinary|imgur|twimg|fbcdn|staticflickr|wp\.com|cdninstagram)/i
 

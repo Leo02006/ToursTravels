@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const uri = process.env.MONGO_URI || process.env.DATABASE_URL || 'mongodb://localhost:27017/tpms';
+const uri = process.env.MONGO_URI || process.env.DATABASE_URL || 'mongodb://tours-backend-z8nj.onrender.com:27017/tpms';
 
 const connectDB = async () => {
     try {

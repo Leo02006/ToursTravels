@@ -78,10 +78,11 @@ export const login = async (req: Request, res: Response): Promise<void> => {
         const token = signToken({ id: user._id.toString(), email: user.email, role: user.role });
 
         // Set cookie on response
+        const isProduction = process.env.NODE_ENV === 'production';
         res.cookie('token', token, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            secure: isProduction, // MUST be true for cross-domain cookies
+            sameSite: isProduction ? 'none' : 'lax', // 'none' allows Vercel frontend to read Render backend cookie
             maxAge: 60 * 60 * 24 * 7 * 1000, // 1 week in ms
             path: '/'
         });

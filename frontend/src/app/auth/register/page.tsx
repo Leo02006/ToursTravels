@@ -49,14 +49,14 @@ export default function RegisterPage() {
     return (
         <>
             <Navbar />
-            <div className="min-h-screen flex items-center justify-center bg-slate-50 p-4 pt-28 pb-12 relative">
+            <div className="min-h-[100dvh] flex items-center justify-center bg-slate-50 p-4 pt-24 relative pb-4">
                 <div className="absolute inset-0 z-0 bg-blue-600/5 clip-path-slant" />
                 <Card className="w-full max-w-md z-10 shadow-xl border-t-4 border-t-blue-600">
-                    <CardHeader>
+                    <CardHeader className="pb-4">
                         <CardTitle className="text-2xl text-center">Create Account</CardTitle>
                         <p className="text-center text-slate-500 mt-2 text-sm">Join Leo's Tours and Travels today</p>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="pb-4">
                         <form onSubmit={handleSubmit} className="space-y-4">
                             {error && <div className="p-3 text-sm text-red-600 bg-red-50 rounded-lg">{error}</div>}
 
@@ -141,7 +141,7 @@ export default function RegisterPage() {
                             </div>
                         </form>
                     </CardContent>
-                    <CardFooter className="justify-center">
+                    <CardFooter className="justify-center pt-2">
                         <p className="text-sm text-slate-600">
                             Already have an account? <Link href="/auth/login" className="text-blue-600 font-medium hover:underline">Sign in</Link>
                         </p>

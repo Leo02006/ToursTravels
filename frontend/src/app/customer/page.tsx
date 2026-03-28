@@ -8,7 +8,7 @@ import { Card, CardContent, CardTitle } from '@/components/ui/Card'
 import { MapPin, Calendar, CheckCircle2 } from 'lucide-react'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { GlobeLoader } from '@/components/ui/GlobeLoader'
-import { proxyImage } from '@/lib/imageProxy'
+import { proxyImage, destinationImage } from '@/lib/imageProxy'
 import { formatDate } from '@/lib/dateUtils'
 
 export default function CustomerDashboard() {
@@ -140,7 +140,19 @@ export default function CustomerDashboard() {
                                     <div className="flex flex-col md:flex-row">
                                         <div className="md:w-64 h-48 md:h-auto bg-slate-200">
                                             {booking.tourPackage?.imageUrl ? (
-                                                <img src={proxyImage(booking.tourPackage.imageUrl) || undefined} alt={booking.tourPackage.title} className="w-full h-full object-cover" />
+                                                <img 
+                                                    src={proxyImage(booking.tourPackage.imageUrl) || undefined} 
+                                                    alt={booking.tourPackage.title} 
+                                                    className="w-full h-full object-cover" 
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement;
+                                                        const dest = booking.tourPackage?.destination || 'travel';
+                                                        const id = booking.tourPackage?.id || booking.tourPackage?._id || 'fallback';
+                                                        if (target.src !== destinationImage(dest, id)) {
+                                                            target.src = destinationImage(dest, id);
+                                                        }
+                                                    }}
+                                                />
                                             ) : (
                                                 <div className="flex items-center justify-center w-full h-full text-slate-400">No Image</div>
                                             )}

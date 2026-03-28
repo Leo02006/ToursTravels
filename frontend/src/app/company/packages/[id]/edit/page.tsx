@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { API_URL } from '@/config/api'
 import { CheckCircle2 } from 'lucide-react'
 import { proxyImage } from '@/lib/imageProxy'
+import { CURRENCIES } from '@/lib/currencies'
 
 export default function EditPackagePage() {
     const router = useRouter()
@@ -176,10 +177,9 @@ export default function EditPackagePage() {
                                         <label className="text-sm font-semibold text-slate-700">Currency</label>
                                         <select className="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-amber-500 outline-none transition"
                                             value={formData.currency} onChange={e => setFormData({ ...formData, currency: e.target.value })}>
-                                            <option value="USD">USD ($)</option>
-                                            <option value="INR">INR (₹)</option>
-                                            <option value="EUR">EUR (€)</option>
-                                            <option value="GBP">GBP (£)</option>
+                                            {CURRENCIES.map(c => (
+                                                <option key={c.code} value={c.code}>{c.code} ({c.symbol}) - {c.name}</option>
+                                            ))}
                                         </select>
                                     </div>
                                     <div className="space-y-2">

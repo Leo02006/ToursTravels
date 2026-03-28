@@ -161,7 +161,12 @@ export default function Home() {
                             className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                             loading={index > 3 ? "lazy" : "eager"}
                             decoding="async"
-                            onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                            onError={e => { 
+                              const target = e.target as HTMLImageElement;
+                              if (target.src !== destinationImage(tour.destination, tourId)) {
+                                target.src = destinationImage(tour.destination, tourId);
+                              }
+                            }}
                           />
                         )}
                         <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-bold text-slate-800 shadow">

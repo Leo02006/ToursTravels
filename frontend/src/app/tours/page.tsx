@@ -286,7 +286,12 @@ export default function ToursPage() {
                                                     src={imageUrl}
                                                     alt={tour.title}
                                                     className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                                    onError={e => { (e.target as HTMLImageElement).style.display = 'none' }}
+                                                    onError={e => { 
+                                                        const target = e.target as HTMLImageElement;
+                                                        if (target.src !== destinationImage(tour.destination, tourId)) {
+                                                            target.src = destinationImage(tour.destination, tourId);
+                                                        }
+                                                    }}
                                                 />
                                             ) : (
                                                 <div className="flex items-center justify-center w-full h-full text-slate-400">No Image</div>

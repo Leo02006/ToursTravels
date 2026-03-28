@@ -145,8 +145,8 @@ export function Navbar() {
             />
 
             {/* Mobile Sidebar */}
-            <div className={`fixed top-0 right-0 h-full w-[280px] bg-white z-[80] shadow-2xl md:hidden transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
-                <div className="p-6 flex flex-col h-full">
+            <div className={`fixed top-0 right-0 h-[100dvh] w-[280px] bg-white z-[80] shadow-2xl md:hidden flex flex-col transition-transform duration-300 ease-in-out ${isMenuOpen ? 'translate-x-0' : 'translate-x-full'}`}>
+                <div className="p-6 flex flex-col h-full overflow-y-auto">
                     <div className="flex items-center justify-between mb-8">
                         <span className="font-bold text-lg text-slate-900">Menu</span>
                         <button onClick={() => setIsMenuOpen(false)} className="p-2 text-slate-500 hover:bg-slate-100 rounded-lg">

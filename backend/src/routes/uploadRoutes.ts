@@ -51,8 +51,9 @@ router.post('/', protect as any, upload.single('image'), (req, res) => {
         }
 
         // Return the public URL for the image
-        // The image will be accessible at http://localhost:5000/uploads/filename
-        const imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+        // Dynamically detect the host if UPLOAD_BASE_URL is not provided
+        const baseUrl = process.env.UPLOAD_BASE_URL || `${req.protocol}://${req.get('host')}`;
+        const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
         res.status(200).json({
             message: 'File uploaded successfully',

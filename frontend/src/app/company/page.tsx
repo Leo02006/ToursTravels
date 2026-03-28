@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/Button'
 import { Plus, Package, Calendar, Users, Briefcase, Pencil, Trash2, MapPin, Clock } from 'lucide-react'
 import { GlobeLoader } from '@/components/ui/GlobeLoader'
 import { useCurrency } from '@/lib/CurrencyContext'
-import { proxyImage } from '@/lib/imageProxy'
+import { proxyImage, destinationImage } from '@/lib/imageProxy'
 import { formatDate } from '@/lib/dateUtils'
 
 export default function CompanyDashboard() {
@@ -171,7 +171,17 @@ export default function CompanyDashboard() {
                                                         {/* Image */}
                                                         <div className="w-full sm:w-36 h-48 sm:h-full bg-slate-200 rounded-t-2xl sm:rounded-l-2xl sm:rounded-tr-none overflow-hidden flex-shrink-0">
                                                             {pkg.imageUrl
-                                                                ? <img src={proxyImage(pkg.imageUrl) || undefined} className="w-full h-full object-cover" alt={pkg.title} />
+                                                                ? <img 
+                                                                    src={proxyImage(pkg.imageUrl) || undefined} 
+                                                                    className="w-full h-full object-cover" 
+                                                                    alt={pkg.title} 
+                                                                    onError={(e) => {
+                                                                        const target = e.target as HTMLImageElement;
+                                                                        if (target.src !== destinationImage(pkg.destination, pkgId)) {
+                                                                            target.src = destinationImage(pkg.destination, pkgId);
+                                                                        }
+                                                                    }}
+                                                                  />
                                                                 : <div className="w-full h-full flex items-center justify-center"><MapPin className="w-8 h-8 text-slate-400" /></div>
                                                             }
                                                         </div>
