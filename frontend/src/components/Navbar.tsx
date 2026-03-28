@@ -17,7 +17,7 @@ export function Navbar() {
     const { currency, setCurrency } = useCurrency()
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } })
             .then(res => res.json())
             .then(data => {
                 if (data.user) setUser(data.user)
@@ -26,10 +26,9 @@ export function Navbar() {
     }, [])
 
     const handleLogout = async () => {
-        await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include' })
+        await fetch(`${API_URL}/auth/logout`, { method: 'POST', credentials: 'include', cache: 'no-store' })
         setUser(null)
-        router.push('/')
-        router.refresh()
+        window.location.href = '/auth/login' // Hard navigation to bypass all client caches
     }
 
     const getDashboardLink = () => {
