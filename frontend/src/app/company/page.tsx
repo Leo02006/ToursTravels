@@ -100,6 +100,27 @@ export default function CompanyDashboard() {
                         </Button>
                     </div>
 
+                    {/* Alerts */}
+                    {user.companyProfile?.approvalStatus === 'REJECTED' && (
+                        <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3 shadow-sm">
+                            <span className="text-xl font-bold">⚠️</span>
+                            <div>
+                                <p className="font-bold">Your Agency Application Was Rejected</p>
+                                <p className="text-sm">The administrator has rejected your company profile. Please contact support to resolve any issues.</p>
+                            </div>
+                        </div>
+                    )}
+
+                    {myPackages.filter(p => p.approvalStatus === 'REJECTED').length > 0 && (
+                        <div className="bg-orange-50 border border-orange-200 text-orange-700 px-4 py-3 rounded-xl mb-6 flex items-center gap-3 shadow-sm">
+                            <span className="text-xl font-bold">⚠️</span>
+                            <div>
+                                <p className="font-bold">Attention Required: Rejected Packages</p>
+                                <p className="text-sm">You have {myPackages.filter(p => p.approvalStatus === 'REJECTED').length} package(s) that were rejected by the administrator. Please review and edit them to comply with our guidelines.</p>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Stats */}
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
                         <Card className="bg-blue-600 border-none text-white shadow-lg overflow-hidden relative">
