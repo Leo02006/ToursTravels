@@ -59,7 +59,7 @@ export default function Home() {
       <section className="relative h-screen min-h-[600px] w-full flex items-center justify-center overflow-hidden bg-slate-900">
         
         {/* Animated Background Collage / Montage (Simplified Transforms) */}
-        <div className="absolute inset-0 z-0 opacity-15 overflow-hidden flex gap-4 md:gap-8 pointer-events-none marquee-wrapper-vertical px-4">
+        <div className="absolute inset-0 z-0 opacity-40 overflow-hidden flex gap-4 md:gap-8 pointer-events-none marquee-wrapper-vertical px-4">
            
             {/* Column 1 - Travels Up: Taj Mahal, Colosseum, Machu Picchu, Burj Khalifa, Petra */}
             <div className="flex-1 flex flex-col gap-4 md:gap-8 animate-marquee-vertical">
