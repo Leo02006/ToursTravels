@@ -6,7 +6,7 @@ import { Navbar } from '@/components/Navbar'
 import { API_URL } from '@/config/api'
 import { Card, CardContent } from '@/components/ui/Card'
 import { Button } from '@/components/ui/Button'
-import { Plus, Package, Calendar, Users, Briefcase, Pencil, Trash2, MapPin, Clock } from 'lucide-react'
+import { Plus, Package, Calendar, Users, Briefcase, Pencil, Trash2, MapPin, Clock, Bell } from 'lucide-react'
 import { GlobeLoader } from '@/components/ui/GlobeLoader'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { proxyImage, destinationImage } from '@/lib/imageProxy'
@@ -19,11 +19,12 @@ export default function CompanyDashboard() {
     const [loading, setLoading] = useState(true)
     const [deletingId, setDeletingId] = useState<string | null>(null)
     const [activeTab, setActiveTab] = useState<'packages' | 'bookings'>('packages')
+    const [showNotifs, setShowNotifs] = useState(false)
     const router = useRouter()
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include', cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (!data.user) router.push('/auth/login')
@@ -32,7 +33,6 @@ export default function CompanyDashboard() {
             })
     }, [router])
 
-    // Fetch data once we have the user with company profile
     useEffect(() => {
         if (!user) return
         const companyProfileId = user.companyProfile?._id || user.companyProfile?.id
@@ -44,7 +44,6 @@ export default function CompanyDashboard() {
         setLoading(true)
         try {
             const [pkgRes, bkRes] = await Promise.all([
-                // Only fetch THIS company's packages using companyId filter
                 fetch(`${API_URL}/packages?companyId=${companyProfileId}`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } }),
                 fetch(`${API_URL}/bookings`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } })
             ])
@@ -75,13 +74,23 @@ export default function CompanyDashboard() {
         }
     }
 
-    // Backend already returns only this company's packages for COMPANY role
     const myPackages = packages
 
     if (!user || loading) return <><Navbar /><GlobeLoader /></>
 
     const approvedCount = myPackages.filter(p => p.approvalStatus === 'APPROVED').length
     const pendingCount = myPackages.filter(p => p.approvalStatus === 'PENDING').length
+
+    // Compute notifications dynamically without backend logic
+    const notifications: any[] = []
+    if (user.companyProfile?.approvalStatus === 'REJECTED') {
+        notifications.push({ id: 'agency-rejected', message: 'Your Agency Application Was Rejected. Contact support.' })
+    }
+    myPackages.forEach(p => {
+        if (p.approvalStatus === 'REJECTED') {
+            notifications.push({ id: `pkg-${p._id || p.id}-rejected`, message: `Your package "${p.title}" was rejected by admin.` })
+        }
+    })
 
     return (
         <>
@@ -95,9 +104,37 @@ export default function CompanyDashboard() {
                             <h1 className="text-3xl font-bold text-slate-900 mb-1">Company Dashboard</h1>
                             <p className="text-slate-500 font-medium">{user.companyProfile?.companyName} · Manage your tour packages</p>
                         </div>
-                        <Button onClick={() => router.push('/company/packages/new')} className="w-full md:w-auto">
-                            <Plus className="w-5 h-5 mr-2" /> Add New Package
-                        </Button>
+                        <div className="flex items-center gap-4">
+                            {/* Notification Bell */}
+                            <div className="relative">
+                                <button onClick={() => setShowNotifs(!showNotifs)} className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 relative transition">
+                                    <Bell className="w-6 h-6 text-slate-600" />
+                                    {notifications.length > 0 && (
+                                        <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                                    )}
+                                </button>
+                                {showNotifs && (
+                                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden">
+                                        <div className="p-4 bg-slate-50 border-b border-slate-100 font-bold text-slate-800">Notifications ({notifications.length})</div>
+                                        <div className="max-h-80 overflow-y-auto">
+                                            {notifications.length === 0 ? (
+                                                <div className="p-6 text-center text-slate-500 text-sm">No new notifications</div>
+                                            ) : (
+                                                notifications.map(n => (
+                                                    <div key={n.id} className="p-4 border-b border-slate-50 hover:bg-slate-50 transition">
+                                                        <p className="text-sm font-medium text-slate-800">{n.message}</p>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <Button onClick={() => router.push('/company/packages/new')} className="w-full md:w-auto">
+                                <Plus className="w-5 h-5 mr-2" /> Add New Package
+                            </Button>
+                        </div>
                     </div>
 
                     {/* Alerts */}

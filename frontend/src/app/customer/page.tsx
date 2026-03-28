@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Navbar } from '@/components/Navbar'
 import { API_URL } from '@/config/api'
 import { Card, CardContent, CardTitle } from '@/components/ui/Card'
-import { MapPin, Calendar, CheckCircle2 } from 'lucide-react'
+import { MapPin, Calendar, CheckCircle2, Bell } from 'lucide-react'
 import { useCurrency } from '@/lib/CurrencyContext'
 import { GlobeLoader } from '@/components/ui/GlobeLoader'
 import { proxyImage, destinationImage } from '@/lib/imageProxy'
@@ -19,11 +19,13 @@ export default function CustomerDashboard() {
     const [reviewRating, setReviewRating] = useState(5)
     const [reviewComment, setReviewComment] = useState('')
     const [actionLoading, setActionLoading] = useState(false)
+    const [notifications, setNotifications] = useState<any[]>([])
+    const [showNotifs, setShowNotifs] = useState(false)
     const router = useRouter()
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${API_URL}/auth/me`, { credentials: 'include' })
+        fetch(`${API_URL}/auth/me`, { credentials: 'include', cache: 'no-store' })
             .then(res => res.json())
             .then(data => {
                 if (!data.user) router.push('/auth/login')
@@ -32,29 +34,53 @@ export default function CustomerDashboard() {
             })
             .catch(error => {
                 console.error("Error fetching user data:", error);
-                // Handle error, e.g., redirect or show a message
             });
 
         const fetchBookings = async () => {
             setLoading(true);
             try {
-                const res = await fetch(`${API_URL}/bookings`, { credentials: 'include' });
-                if (!res.ok) {
-                    throw new Error(`HTTP error! status: ${res.status}`);
-                }
+                const res = await fetch(`${API_URL}/bookings`, { credentials: 'include', cache: 'no-store' });
+                if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
                 const data = await res.json();
                 setBookings(Array.isArray(data) ? data : []);
             } catch (error) {
                 console.error("Error fetching bookings:", error);
-                setBookings([]); // Clear bookings on error
+                setBookings([]);
             } finally {
                 setTimeout(() => setLoading(false), 2500);
             }
         };
 
         fetchBookings();
-
     }, [router])
+
+    useEffect(() => {
+        if (!user || bookings.length === 0) return;
+        const fetchNotifications = async () => {
+            const pkgIds = [...new Set(bookings.map((b: any) => b.tourPackage?.id || b.tourPackage?._id || b.packageId))].filter(Boolean)
+            const notifs: any[] = []
+            for (const pid of pkgIds) {
+                try {
+                    const rRes = await fetch(`${API_URL}/reviews/package/${pid}`, { credentials: 'include', cache: 'no-store' })
+                    if (rRes.ok) {
+                        const packageReviews = await rRes.json()
+                        const userId = user.id || user._id
+                        packageReviews.forEach((r: any) => {
+                            const rUserId = typeof r.userId === 'object' ? (r.userId._id || r.userId.id) : r.userId
+                            if (rUserId === userId && r.adminResponse) {
+                                notifs.push({
+                                    id: r._id,
+                                    message: `Admin replied to your review: "${r.adminResponse}"`
+                                })
+                            }
+                        })
+                    }
+                } catch (e) {}
+            }
+            setNotifications(notifs)
+        }
+        fetchNotifications()
+    }, [user, bookings])
 
     const handleCancel = async (bookingId: string) => {
         if (!confirm('Are you sure you want to cancel this booking? A 20% cancellation fee may apply.')) return;
@@ -66,8 +92,7 @@ export default function CustomerDashboard() {
             })
             if (!res.ok) throw new Error('Cancellation failed')
             alert('Booking cancelled successfully and refund initiated')
-            // Refresh bookings
-            const bRes = await fetch(`${API_URL}/bookings`, { credentials: 'include' })
+            const bRes = await fetch(`${API_URL}/bookings`, { credentials: 'include', cache: 'no-store' })
             const data = await bRes.json()
             setBookings(Array.isArray(data) ? data : [])
         } catch (err: any) {
@@ -112,11 +137,39 @@ export default function CustomerDashboard() {
                             <h1 className="text-3xl font-bold text-slate-900 mb-2">Welcome, {user.name}</h1>
                             <p className="text-slate-600">View and manage your upcoming journeys.</p>
                         </div>
-                        <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
-                            <div className="bg-blue-50 p-3 rounded-xl"><Calendar className="w-6 h-6 text-blue-600" /></div>
-                            <div>
-                                <p className="text-sm font-medium text-slate-500">Total Trips</p>
-                                <p className="text-xl font-bold text-slate-900">{bookings.length}</p>
+                        <div className="flex items-center gap-4">
+                            {/* Notification Bell */}
+                            <div className="relative">
+                                <button onClick={() => setShowNotifs(!showNotifs)} className="p-3 bg-white rounded-2xl shadow-sm border border-slate-100 hover:bg-slate-50 relative transition">
+                                    <Bell className="w-6 h-6 text-slate-600" />
+                                    {notifications.length > 0 && (
+                                        <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-white"></span>
+                                    )}
+                                </button>
+                                {showNotifs && (
+                                    <div className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-2xl border border-slate-100 z-50 overflow-hidden">
+                                        <div className="p-4 bg-slate-50 border-b border-slate-100 font-bold text-slate-800">Notifications ({notifications.length})</div>
+                                        <div className="max-h-80 overflow-y-auto">
+                                            {notifications.length === 0 ? (
+                                                <div className="p-6 text-center text-slate-500 text-sm">No new notifications</div>
+                                            ) : (
+                                                notifications.map(n => (
+                                                    <div key={n.id} className="p-4 border-b border-slate-50 hover:bg-slate-50 transition">
+                                                        <p className="text-sm font-medium text-slate-800">{n.message}</p>
+                                                    </div>
+                                                ))
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 flex items-center gap-4">
+                                <div className="bg-blue-50 p-3 rounded-xl"><Calendar className="w-6 h-6 text-blue-600" /></div>
+                                <div>
+                                    <p className="text-sm font-medium text-slate-500">Total Trips</p>
+                                    <p className="text-xl font-bold text-slate-900">{bookings.length}</p>
+                                </div>
                             </div>
                         </div>
                     </div>
