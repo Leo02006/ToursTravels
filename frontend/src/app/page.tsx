@@ -27,7 +27,7 @@ export default function Home() {
   const [tours, setTours] = useState<Tour[]>([])
 
   useEffect(() => {
-    fetch(`${API_URL}/packages`, { credentials: 'include' })
+    fetch(`${API_URL}/packages`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } })
       .then(res => res.json())
       .then(data => {
         if (Array.isArray(data) && data.length > 0) {

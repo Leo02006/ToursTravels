@@ -45,8 +45,8 @@ export default function CompanyDashboard() {
         try {
             const [pkgRes, bkRes] = await Promise.all([
                 // Only fetch THIS company's packages using companyId filter
-                fetch(`${API_URL}/packages?companyId=${companyProfileId}`, { credentials: 'include' }),
-                fetch(`${API_URL}/bookings`, { credentials: 'include' })
+                fetch(`${API_URL}/packages?companyId=${companyProfileId}`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } }),
+                fetch(`${API_URL}/bookings`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } })
             ])
             const pkgs = await pkgRes.json()
             const bks = await bkRes.json()

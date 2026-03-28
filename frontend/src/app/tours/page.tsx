@@ -39,7 +39,7 @@ export default function ToursPage() {
     const { format } = useCurrency()
 
     useEffect(() => {
-        fetch(`${API_URL}/packages`, { credentials: 'include' })
+        fetch(`${API_URL}/packages`, { credentials: 'include', cache: 'no-store', headers: { 'Pragma': 'no-cache', 'Cache-Control': 'no-cache' } })
             .then(res => res.json())
             .then(data => setTours(Array.isArray(data) ? data : []))
             .catch(err => console.error(err))
