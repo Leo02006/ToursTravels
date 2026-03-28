@@ -25,7 +25,7 @@ const PORT = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors({
-    origin: process.env.FRONTEND_URL || 'https://tours-travels-seven.vercel.app',
+    origin: [process.env.FRONTEND_URL || 'https://tours-travels-seven.vercel.app', 'https://leos-tours-travels.vercel.app'],
     credentials: true, // Allow cookies to be sent across origin
 }));
 app.use(express.json());
