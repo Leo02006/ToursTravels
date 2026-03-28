@@ -30,7 +30,7 @@ const upload = multer({
     storage: storage,
     limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
     fileFilter: (req, file, cb) => {
-        const filetypes = /jpeg|jpg|png|webp|gif/;
+        const filetypes = /jpeg|jpg|png|webp|gif|avif|svg/;
         const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
         const mimetype = filetypes.test(file.mimetype);
 
@@ -44,24 +44,30 @@ const upload = multer({
 
 // POST /api/upload
 // Requires COMPANY or ADMIN role (handled by protect middleware context if needed, but simple protect is fine here)
-router.post('/', protect as any, upload.single('image'), (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ error: 'No file uploaded' });
+router.post('/', protect as any, (req, res, next) => {
+    upload.single('image')(req, res, function (err) {
+        if (err) {
+            return res.status(400).json({ error: err.message });
         }
+        
+        try {
+            if (!req.file) {
+                return res.status(400).json({ error: 'No file uploaded' });
+            }
 
-        // Return the public URL for the image
-        // Dynamically detect the host if UPLOAD_BASE_URL is not provided
-        const baseUrl = process.env.UPLOAD_BASE_URL || `${req.protocol}://${req.get('host')}`;
-        const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
+            // Return the public URL for the image
+            // Dynamically detect the host if UPLOAD_BASE_URL is not provided
+            const baseUrl = process.env.UPLOAD_BASE_URL || `${req.protocol}://${req.get('host')}`;
+            const imageUrl = `${baseUrl}/uploads/${req.file.filename}`;
 
-        res.status(200).json({
-            message: 'File uploaded successfully',
-            imageUrl: imageUrl
-        });
-    } catch (error: any) {
-        res.status(500).json({ error: error.message || 'File upload failed' });
-    }
+            res.status(200).json({
+                message: 'File uploaded successfully',
+                imageUrl: imageUrl
+            });
+        } catch (error: any) {
+            res.status(500).json({ error: error.message || 'File upload failed' });
+        }
+    });
 });
 
 export default router;
